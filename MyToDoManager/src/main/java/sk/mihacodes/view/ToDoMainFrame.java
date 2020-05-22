@@ -20,14 +20,21 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import sk.mihacodes.control.LoginControl;
 import sk.mihacodes.control.RegistrationControl;
+import sk.mihacodes.control.TaskListControl;
+import sk.mihacodes.control.TaskPriorityControl;
 import sk.mihacodes.model.LoginBean;
 import sk.mihacodes.model.ToDoBean;
 import tornadofx.control.DateTimePicker;
 
+
 public class ToDoMainFrame extends Application implements IButtons {
 
 	LoginBean lb = new LoginBean();
+	ToDoBean todoBean = new ToDoBean();
+	TaskListControl tlc = new TaskListControl();
 
+	TaskPriorityControl tpc = new TaskPriorityControl();
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		initUI(stage);
@@ -62,9 +69,9 @@ public class ToDoMainFrame extends Application implements IButtons {
 
 		Label taskPriorityLabel = new Label("Task Priority");
 
-		ObservableList<String> taskPriorityList = FXCollections.observableArrayList("Do First", "Do Later", "Delegate",
-				"Eliminate");
+		ObservableList<String> taskPriorityList = FXCollections.observableArrayList("High", "Medium", "Low");
 
+		
 		ChoiceBox<String> taskPriorityChoice = new ChoiceBox<String>(taskPriorityList);
 
 		Label taskTargetDateLabel = new Label("Target Date");
@@ -91,6 +98,7 @@ public class ToDoMainFrame extends Application implements IButtons {
 			todoBean.addToDoToDatabase(lb.getUsername());
 			
 			vbox.getChildren().clear();
+
 			vbox.getChildren().add(new HBox(new Label(taskTitleField.getText().concat(" | ")), new Label(
 					taskTargetDatePicker.getDateTimeValue().format(DateTimeFormatter.ofPattern("HH:mm\ndd.MM.yyyy")))));
 
@@ -117,7 +125,7 @@ public class ToDoMainFrame extends Application implements IButtons {
 		VBox vbox = new VBox(usernameHBox, passwordHBox, loginButtons, registerWarningMessage);
 		vbox.setAlignment(Pos.CENTER);
 
-		ListView<VBox> listView = new ListView<>();
+		ListView listView = new ListView();
 		listView.setEditable(true);
 		listView.setPrefHeight(500);
 
@@ -149,7 +157,15 @@ public class ToDoMainFrame extends Application implements IButtons {
 				var hbox = new HBox(btn);
 
 				vbox.getChildren().add(hbox);
+				
+//				listView.getItems().addAll(todoBean.readTasksFromList(lb.getUsername()));
+//				listView.setStyle(tpc.taskPriorityColor(lb.getUsername()));
+			
+//				tlc.taskListView(lb.getUsername());
+				
+				vbox.getChildren().add(tlc.taskListView(lb.getUsername()));
 				vbox.getChildren().add(listView);
+				
 			} else {
 				registerWarningMessage.setText("*Username or Password is incorrect");
 
